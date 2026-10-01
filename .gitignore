@@ -1,0 +1,10 @@
+# Internal working files — not for public repo
+.claude/
+New folder/
+instruction.txt
+color_style.txt
+
+# Python
+__pycache__/
+*.pyc
+.venv/

@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Market Movement | UOB Kay Hian</title>
+<style>
+:root{
+  --ink:#3F4C54;          /* dark grey  */
+  --red:#C33B32;          /* red        */
+  --vino:#760E3A;         /* vino       */
+  --gold:#A89983;         /* gold       */
+  --steel:#DBE0E4;        /* steel grey */
+  --up:#1E7A5F;           /* forest green */
+  --bg:#FFFFFF;
+  --bg-alt:#F5F7F8;
+  --line:#E2E7EA;
+  --line-strong:#C7D0D5;
+  --muted:#7A868D;
+  --radius:6px;
+  --mono:"SF Mono",ui-monospace,"Cascadia Mono","Consolas","Roboto Mono",monospace;
+  --sans:"Inter","Segoe UI",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--sans);
+  background:var(--bg-alt);
+  color:var(--ink);
+  font-size:13px;
+  -webkit-font-smoothing:antialiased;
+}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.up{color:var(--up)}
+.dn{color:var(--red)}
+.fl{color:var(--muted)}
+.fw-bold{font-weight:700}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;gap:16px;
+  padding:10px 20px;
+  background:var(--bg);
+  border-bottom:2px solid var(--ink);
+}
+header img{height:34px;width:auto;display:block}
+.title-block{line-height:1.25}
+.title-block h1{margin:0;font-size:16px;font-weight:700;letter-spacing:.02em;color:var(--ink)}
+.title-block .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.header-spacer{flex:1}
+.header-meta{
+  display:flex;gap:18px;align-items:center;
+  font-size:11px;color:var(--muted);text-align:right;
+}
+.header-meta b{display:block;font-size:13px;color:var(--ink);font-family:var(--mono)}
+.status-pill{
+  display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.status-pill.closed{background:#E5F4EE;color:var(--up)}
+.status-pill.progress{background:#FDF3E1;color:#8F6306}
+
+/* ---------- shell ---------- */
+.shell{display:flex;align-items:flex-start;min-height:calc(100vh - 56px)}
+
+/* ---------- sidebar ---------- */
+aside{
+  width:220px;flex:0 0 220px;
+  position:sticky;top:56px;
+  max-height:calc(100vh - 56px);overflow-y:auto;
+  background:var(--bg);
+  border-right:1px solid var(--line);
+  padding:12px 0 24px;
+}
+.aside-label{
+  font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);padding:0 14px 8px;
+}
+.weekbtn{
+  display:block;width:100%;text-align:left;cursor:pointer;
+  background:none;border:0;border-left:3px solid transparent;
+  padding:9px 14px;font-family:inherit;color:inherit;
+  border-bottom:1px solid var(--line);transition:background .15s;
+}
+.weekbtn:hover{background:var(--bg-alt)}
+.weekbtn.active{background:#EEF2F4;border-left-color:var(--vino)}
+.weekbtn .d1{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700;font-family:var(--sans)}
+.weekbtn .d1 .badge{font-size:9.5px;padding:1px 5px;border-radius:3px;font-weight:600}
+.weekbtn .d2{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:3px}
+.breadth{display:flex;height:3px;margin-top:5px;border-radius:2px;overflow:hidden;background:var(--steel)}
+.breadth i{display:block;height:100%}
+
+/* ---------- main ---------- */
+main{flex:1;min-width:0;padding:16px 20px 60px}
+
+/* ---------- KPI strip ---------- */
+.strip{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:14px;
+}
+.stat{background:var(--bg);padding:10px 14px}
+.stat .k{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-size:17px;font-weight:700;font-family:var(--mono);margin-top:2px}
+.stat .u{font-size:10.5px;color:var(--muted);font-weight:400;margin-left:3px}
+.stat .substat{font-size:10.5px;margin-top:2px;font-family:var(--mono)}
+
+/* ---------- tabs ---------- */
+nav.tabs{display:flex;gap:2px;border-bottom:2px solid var(--ink);margin-bottom:14px;flex-wrap:wrap}
+.tab{
+  cursor:pointer;border:0;background:none;font-family:inherit;font-size:12px;font-weight:600;
+  color:var(--muted);padding:9px 15px;border-radius:var(--radius) var(--radius) 0 0;
+  transition:all .15s;
+}
+.tab:hover{background:var(--bg);color:var(--ink)}
+.tab.active{background:var(--ink);color:#fff}
+.tab .badge{font-weight:400;opacity:.8;font-size:10.5px;margin-left:5px}
+
+/* ---------- sub toggles & search ---------- */
+.toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:12px;flex-wrap:wrap;
+}
+.btn-group{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--radius);overflow:hidden;background:var(--bg)}
+.btn-toggle{
+  border:0;background:none;padding:6px 12px;font-size:11.5px;font-weight:600;
+  color:var(--muted);cursor:pointer;font-family:inherit;border-right:1px solid var(--line);
+}
+.btn-toggle:last-child{border-right:0}
+.btn-toggle:hover{background:var(--bg-alt);color:var(--ink)}
+.btn-toggle.active{background:var(--ink);color:#fff}
+
+.search-box{
+  display:inline-flex;align-items:center;background:var(--bg);border:1px solid var(--line-strong);
+  border-radius:var(--radius);padding:4px 8px;gap:6px;min-width:200px;
+}
+.search-box input{
+  border:0;outline:0;font-family:inherit;font-size:12px;color:var(--ink);background:transparent;width:100%;
+}
+.search-box input::placeholder{color:var(--muted)}
+
+/* ---------- panels & tables ---------- */
+.panel{
+  background:var(--bg);border:1px solid var(--line);
+  border-radius:var(--radius);margin-bottom:16px;overflow:hidden;
+}
+.panel > h2{
+  margin:0;padding:10px 14px;font-size:12.5px;font-weight:700;letter-spacing:.02em;
+  background:var(--ink);color:#fff;
+  display:flex;align-items:center;gap:10px;
+}
+.panel > h2 .note{font-weight:400;font-size:10.5px;opacity:.8;margin-left:auto;text-align:right}
+.panel.vino > h2{background:var(--vino)}
+.panel.gold > h2{background:var(--gold);color:#2A2118}
+.scroll{overflow-x:auto}
+
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:12px}
+thead th{
+  position:sticky;top:0;z-index:2;
+  background:var(--steel);color:var(--ink);
+  font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  padding:7px 9px;text-align:right;white-space:nowrap;
+  border-bottom:1px solid var(--line-strong);
+  cursor:pointer;user-select:none;
+}
+thead th:hover{background:#CBD3D8}
+thead th.nosort{cursor:default}
+thead th.nosort:hover{background:var(--steel)}
+thead th.l{text-align:left}
+thead th.c{text-align:center}
+thead th .arrow{opacity:.4;font-size:9px;margin-left:3px}
+thead th.sorted{background:var(--ink);color:#fff}
+thead th.sorted .arrow{opacity:1}
+tbody td{
+  padding:5px 9px;text-align:right;white-space:nowrap;
+  border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-variant-numeric:tabular-nums;
+}
+tbody td.l{text-align:left;font-family:var(--sans)}
+tbody td.c{text-align:center;font-family:var(--sans)}
+tbody tr:nth-child(even){background:#FAFBFC}
+tbody tr:hover{background:#EEF2F4}
+tbody tr.benchmark-row{background:#F7F5F0;font-weight:600;border-top:2px solid var(--gold);border-bottom:2px solid var(--gold)}
+tbody tr.benchmark-row td{color:var(--ink)}
+
+td.rank{color:var(--muted);font-size:11px;width:32px;text-align:center}
+td.sym{font-weight:700;font-family:var(--mono);letter-spacing:.02em}
+td.name{color:var(--muted);font-size:11px;max-width:210px;overflow:hidden;text-overflow:ellipsis}
+td.th-name{font-size:10.5px;color:var(--muted);margin-left:4px}
+.empty{padding:30px 14px;text-align:center;color:var(--muted);font-size:12px}
+
+/* ---------- performance bars ---------- */
+.bar-cell{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.mini-bar{height:6px;border-radius:3px;min-width:3px;display:inline-block}
+
+/* ---------- range bar ---------- */
+.rb{position:relative;height:14px;width:120px;display:inline-block;vertical-align:middle}
+.rb .track{position:absolute;top:6px;left:0;right:0;height:2px;background:var(--steel);border-radius:1px}
+.rb .fill{position:absolute;top:5px;height:4px;border-radius:2px;opacity:.85}
+.rb .close{position:absolute;top:1px;width:2px;height:12px;background:var(--ink);border-radius:1px}
+.rb-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.rb-ends{font-size:9.5px;color:var(--muted);font-family:var(--mono);width:36px}
+.rb-ends.r{text-align:left}
+
+/* ---------- 2-column & 3-column grids ---------- */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media (max-width:1100px){
+  .grid-2{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:1fr}
+}
+
+/* ---------- share bar chart ---------- */
+.share-bar-container{
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);
+  padding:12px 14px;margin-bottom:16px;
+}
+.share-bar-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+.share-bar{
+  display:flex;height:24px;border-radius:4px;overflow:hidden;background:var(--steel);
+}
+.share-segment{
+  height:100%;position:relative;cursor:pointer;transition:opacity .15s;
+}
+.share-segment:hover{opacity:.85}
+.share-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:11px}
+.share-legend-item{display:inline-flex;align-items:center;gap:5px}
+.share-dot{width:10px;height:10px;border-radius:2px}
+
+/* ---------- flow diverging bar ---------- */
+.flow-bar-row{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px}
+.flow-bar-track{flex:1;height:12px;display:flex;align-items:center;position:relative}
+.flow-bar-center{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line-strong)}
+.flow-bar-fill{height:8px;border-radius:2px}
+
+footer{padding:14px 20px 30px;font-size:10.5px;color:var(--muted);line-height:1.7}
+footer b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header>
+  <img id="logo" alt="UOB Kay Hian">
+  <div class="title-block">
+    <h1>Weekly Market Movement</h1>
+    <div class="sub">SET · Sector Rankings (Weekly &amp; YTD) · SET50 &amp; SET100 · Turnover Breakdown · NVDR Flow</div>
+  </div>
+  <div class="header-spacer"></div>
+  <div class="header-meta">
+    <div>Weekly Period<b id="hdr-period">—</b></div>
+    <div>Total Turnover<b id="hdr-turnover">—</b></div>
+    <div>SET Index<b id="hdr-set">—</b></div>
+    <div>Built<b id="hdr-built">—</b></div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside>
+    <div class="aside-label">Trading Week (Fri–Thu)</div>
+    <div id="weeklist"></div>
+  </aside>
+
+  <main>
+    <div class="strip" id="strip"></div>
+    <nav class="tabs" id="tabs"></nav>
+    <div id="view"></div>
+    <footer id="footer">
+      <b>UOB Kay Hian Securities</b> · Weekly Equity Dashboard (Friday Review) ·
+      Data extracted from SETSMART historical database (<code style="font-family:var(--mono)">set_stocks.duckdb</code>).
+      Weekly return measures Friday opening through Thursday closing relative to prior Thursday close.
+      YTD return measures movement relative to year-end 2025 close (<span id="ftr-ytd-base">—</span>).
+    </footer>
+  </main>
+</div>
+
+<script>
+const LOGO = /*__LOGO__*/'';
+const DATA = /*__DATA__*/null;
+
+/* ------------------------------------------------------------------ format */
+const nf = (v, d = 2) => v === null || v === undefined
+  ? '<span class="fl">–</span>'
+  : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const ni = v => v === null || v === undefined
+  ? '<span class="fl">–</span>'
+  : Math.round(Number(v)).toLocaleString('en-US');
+const cls = v => v === null || v === undefined ? 'fl' : v > 0 ? 'up' : v < 0 ? 'dn' : 'fl';
+const sgn = (v, d = 2) => v === null || v === undefined
+  ? '<span class="fl">–</span>'
+  : (v > 0 ? '+' : '') + Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ------------------------------------------------------------------ state */
+let activeWeekId = DATA.defaultWeekId || DATA.weekList[0];
+let activeTab = 'overview';
+let sectorViewMode = 'weekly';   // 'weekly' | 'ytd' | 'matrix'
+let top20Liquidity = 'liquid';    // 'liquid' | 'all'
+let stockFilter50 = 'all';        // 'all' | 'gainers' | 'losers'
+let stockFilter100 = 'all';       // 'all' | 'gainers' | 'losers'
+let search50 = '';
+let search100 = '';
+let searchSector = '';
+let sector100Filter = 'all';
+const sortState = {};            // tableKey -> {col, dir}
+
+/* ------------------------------------------------------------------ table engine */
+function renderTable(key, cols, rows, opts = {}) {
+  const st = sortState[key];
+  const head = cols.map((c, i) => {
+    const sortable = c.s !== false;
+    const on = st && st.col === i;
+    const arrow = on ? (st.dir === 'asc' ? '▲' : '▼') : (sortable ? '⇅' : '');
+    return `<th class="${c.a === 'l' ? 'l ' : c.a === 'c' ? 'c ' : ''}${c.hcl ? c.hcl + ' ' : ''}${sortable ? '' : 'nosort '}${on ? 'sorted' : ''}"
+      ${sortable ? `data-t="${key}" data-c="${i}"` : ''}>${esc(c.t)}<span class="arrow">${arrow}</span></th>`;
+  }).join('');
+
+  let trs = '';
+  if (opts.benchmarkRows && opts.benchmarkRows.length) {
+    trs += opts.benchmarkRows.map(r => '<tr class="benchmark-row">' + cols.map(c =>
+      `<td class="${c.cl || ''}${c.a === 'l' ? ' l' : c.a === 'c' ? ' c' : ''}">${c.f(r, 0)}</td>`).join('') + '</tr>').join('');
+  }
+
+  trs += rows.map((r, i) => '<tr>' + cols.map(c =>
+    `<td class="${c.cl || ''}${c.a === 'l' ? ' l' : c.a === 'c' ? ' c' : ''}">${c.f(r, i + 1)}</td>`).join('') + '</tr>').join('');
+
+  return `<table><thead><tr>${head}</tr></thead><tbody>${trs}</tbody></table>`;
+}
+
+function table(key, cols, rows, opts = {}) {
+  if (!rows || !rows.length) return `<div class="empty">${opts.emptyMsg || 'No data available for this selection.'}</div>`;
+
+  const st = sortState[key];
+  let body = rows.slice();
+  if (st) {
+    const c = cols[st.col];
+    body.sort((A, B) => {
+      const a = typeof c.k === 'function' ? c.k(A) : A[c.k];
+      const b = typeof c.k === 'function' ? c.k(B) : B[c.k];
+      if (a === null || a === undefined) return 1;
+      if (b === null || b === undefined) return -1;
+      const d = typeof a === 'string' ? a.localeCompare(b) : a - b;
+      return st.dir === 'asc' ? d : -d;
+    });
+  }
+
+  return `<div class="scroll">${renderTable(key, cols, body, opts)}</div>`;
+}
+
+/* ------------------------------------------------------------------ range bar */
+function stockRangeBar(r) {
+  const low = r.low, high = r.high, close = r.close, base = r.base;
+  if (high === null || low === null || high === low || close === null) {
+    return `<div class="rb-wrap"><span class="rb-ends">${nf(low)}</span>
+      <span class="rb"><span class="track"></span></span>
+      <span class="rb-ends r">${nf(high)}</span></div>`;
+  }
+  const p = v => Math.max(0, Math.min(100, (v - low) / (high - low) * 100));
+  const b = p(close);
+  const a = base !== null ? p(base) : b;
+  const lo = Math.min(a, b), w = Math.max(Math.abs(b - a), 1.5);
+  const col = r.wow_pct > 0 ? 'var(--up)' : r.wow_pct < 0 ? 'var(--red)' : 'var(--gold)';
+  return `<div class="rb-wrap" title="Low: ${nf(low)} · High: ${nf(high)} · Base: ${nf(base)} · Close: ${nf(close)}">
+    <span class="rb-ends">${nf(low)}</span>
+    <span class="rb">
+      <span class="track"></span>
+      <span class="fill" style="left:${lo}%;width:${w}%;background:${col}"></span>
+      <span class="close" style="left:calc(${b}% - 1px)"></span>
+    </span>
+    <span class="rb-ends r">${nf(high)}</span></div>`;
+}
+
+/* ------------------------------------------------------------------ views */
+
+/* 1. Overview Tab */
+function viewOverview(w) {
+  const sum = w.summary;
+  const topSec = w.sectors_weekly[0];
+  const botSec = w.sectors_weekly[w.sectors_weekly.length - 1];
+  const topValSec = w.sectors_value[0];
+  const topNvdrSec = w.sectors_nvdr[0];
+
+  // Top 5 Gainers / Losers for SET50 & SET100
+  const s50Up = w.set50.slice(0, 5);
+  const s50Dn = w.set50.slice(-5).reverse();
+  const s100Up = w.set100.slice(0, 5);
+  const s100Dn = w.set100.slice(-5).reverse();
+
+  // Sector Horizontal Ranking Bars (Top 7 & Bottom 7)
+  const maxAbsWoW = Math.max(...w.sectors_weekly.map(s => Math.abs(s.wow_pct || 0)), 1);
+  const top7 = w.sectors_weekly.slice(0, 7);
+  const bot7 = w.sectors_weekly.slice(-7).reverse();
+
+  const renderSecBar = s => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11.5px">
+      <div style="width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(s.name_en)} (${esc(s.name_th)})">
+        <b>${esc(s.symbol)}</b> <span style="color:var(--muted)">${esc(s.name_en)}</span>
+      </div>
+      <div style="flex:1;background:var(--steel);height:14px;border-radius:3px;overflow:hidden;position:relative">
+        <div style="height:100%;width:${Math.abs(s.wow_pct || 0) / maxAbsWoW * 100}%;background:${(s.wow_pct || 0) >= 0 ? 'var(--up)' : 'var(--red)'}"></div>
+      </div>
+      <div style="width:55px;text-align:right;font-family:var(--mono);font-weight:700" class="${cls(s.wow_pct)}">
+        ${sgn(s.wow_pct)}%
+      </div>
+    </div>`;
+
+  return `
+  <div class="grid-2">
+    <section class="panel">
+      <h2>Weekly Sector Movers (Friday–Thursday)
+        <span class="note">Top &amp; Bottom Sector Leaders</span></h2>
+      <div style="padding:14px">
+        <div style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Top Performing Sectors</div>
+        ${top7.map(renderSecBar).join('')}
+        <div style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:14px;margin-bottom:8px">Underperforming Sectors</div>
+        ${bot7.map(renderSecBar).join('')}
+      </div>
+    </section>
+
+    <div>
+      <section class="panel vino">
+        <h2>SET50 Weekly Leaders
+          <span class="note">SET50 Index: <span class="${cls(sum.set50_wow_pct)}">${sgn(sum.set50_wow_pct)}%</span></span></h2>
+        <div style="padding:10px 14px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--up);text-transform:uppercase;margin-bottom:6px">▲ Top Gainers</div>
+              ${s50Up.map(s => `<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:11.5px;border-bottom:1px solid var(--line)">
+                <span><b>${esc(s.symbol)}</b> <span style="font-size:10px;color:var(--muted)">${esc(s.sector)}</span></span>
+                <span class="num up"><b>${sgn(s.wow_pct)}%</b></span>
+              </div>`).join('')}
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;margin-bottom:6px">▼ Top Losers</div>
+              ${s50Dn.map(s => `<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:11.5px;border-bottom:1px solid var(--line)">
+                <span><b>${esc(s.symbol)}</b> <span style="font-size:10px;color:var(--muted)">${esc(s.sector)}</span></span>
+                <span class="num dn"><b>${sgn(s.wow_pct)}%</b></span>
+              </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel gold">
+        <h2>Market Turnover &amp; NVDR Flow Leaders
+          <span class="note">Concentration &amp; Institutional Direction</span></h2>
+        <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div>
+            <div style="font-size:10.5px;font-weight:700;color:var(--ink);text-transform:uppercase">Top Sector Turnover</div>
+            <div style="font-size:14px;font-weight:700;margin-top:4px">${esc(topValSec.name_en)}</div>
+            <div style="font-size:11px;color:var(--muted);font-family:var(--mono)">
+              ${nf(topValSec.val_mb, 0)} M฿ (${nf(topValSec.val_share, 1)}% of market)
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10.5px;font-weight:700;color:var(--ink);text-transform:uppercase">Top NVDR Inflow Sector</div>
+            <div style="font-size:14px;font-weight:700;margin-top:4px" class="up">${esc(topNvdrSec.name_en)}</div>
+            <div style="font-size:11px;font-family:var(--mono)" class="${cls(topNvdrSec.nvdr_net_mb)}">
+              Net: ${sgn(topNvdrSec.nvdr_net_mb, 1)} M฿
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>`;
+}
+
+/* 2. Sector Ranking Tab (Weekly, YTD, and Matrix) */
+function viewSectorRanking(w) {
+  const bm = w.benchmarks['.SET'] || {};
+  const setBenchmarkRow = {
+    symbol: '.SET',
+    name_en: 'SET INDEX (Market Benchmark)',
+    name_th: 'ดัชนีตลาดหลักทรัพย์',
+    industry: 'Benchmark',
+    base_close: bm.base,
+    end_close: bm.end,
+    chg: (bm.end && bm.base) ? (bm.end - bm.base) : null,
+    wow_pct: bm.wow,
+    ytd_base: bm.ytd_base,
+    ytd_pct: bm.ytd,
+    alpha_set: 0.0,
+    val_mb: w.summary.turnover_mb,
+    val_share: 100.0,
+    nvdr_net_mb: w.summary.nvdr_net_mb,
+  };
+
+  const toolbar = `
+  <div class="toolbar">
+    <div class="btn-group">
+      <button class="btn-toggle ${sectorViewMode === 'weekly' ? 'active' : ''}" onclick="setSectorView('weekly')">
+        Weekly Ranking (Fri–Thu)
+      </button>
+      <button class="btn-toggle ${sectorViewMode === 'ytd' ? 'active' : ''}" onclick="setSectorView('ytd')">
+        Year-to-Date Ranking (YTD)
+      </button>
+      <button class="btn-toggle ${sectorViewMode === 'matrix' ? 'active' : ''}" onclick="setSectorView('matrix')">
+        Combined Matrix (WoW, YTD, Turnover, NVDR)
+      </button>
+    </div>
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" placeholder="Search sector name or code..." value="${esc(searchSector)}" oninput="onSectorSearch(this.value)">
+    </div>
+  </div>`;
+
+  let filterRows = (rows) => {
+    if (!searchSector) return rows;
+    const q = searchSector.toLowerCase();
+    return rows.filter(r => r.symbol.toLowerCase().includes(q) || r.name_en.toLowerCase().includes(q) || r.name_th.toLowerCase().includes(q));
+  };
+
+  if (sectorViewMode === 'weekly') {
+    const maxVal = Math.max(...w.sectors_weekly.map(s => s.val_mb || 0), 1);
+    const cols = [
+      { t: 'Rank', k: 'rank_wow', a: 'c', cl: 'rank', f: (r, i) => r.symbol === '.SET' ? '★' : r.rank_wow || i },
+      { t: 'Sector', k: 'name_en', a: 'l', f: r => `<b>${esc(r.symbol)}</b> <span style="font-weight:600">${esc(r.name_en)}</span> <span class="th-name">(${esc(r.name_th)})</span>` },
+      { t: 'Industry', k: 'industry', a: 'l', cl: 'name', f: r => esc(r.industry) },
+      { t: 'Prev Close', k: 'base_close', f: r => nf(r.base_close) },
+      { t: 'Week Close', k: 'end_close', f: r => `<b>${nf(r.end_close)}</b>` },
+      { t: 'WoW Chg', k: 'chg', f: r => `<span class="${cls(r.chg)}">${sgn(r.chg)}</span>` },
+      { t: 'Weekly %Chg', k: 'wow_pct', f: r => {
+        const p = r.wow_pct;
+        const color = p > 0 ? 'var(--up)' : p < 0 ? 'var(--red)' : 'var(--muted)';
+        const barW = Math.min(60, Math.abs(p || 0) * 8);
+        return `<div class="bar-cell">
+          <span class="mini-bar" style="width:${barW}px;background:${color}"></span>
+          <span class="${cls(p)} fw-bold">${sgn(p)}%</span>
+        </div>`;
+      }},
+      { t: 'Turnover (M฿)', k: 'val_mb', f: r => nf(r.val_mb, 1) },
+      { t: '% Share', k: 'val_share', f: r => `${nf(r.val_share, 1)}%` },
+      { t: 'NVDR Net (M฿)', k: 'nvdr_net_mb', f: r => `<span class="${cls(r.nvdr_net_mb)}">${sgn(r.nvdr_net_mb, 1)}</span>` },
+      { t: 'YTD %Chg', k: 'ytd_pct', f: r => `<span class="${cls(r.ytd_pct)}">${sgn(r.ytd_pct)}%</span>` },
+    ];
+    return toolbar + `
+    <section class="panel">
+      <h2>Sector Performance Ranking: Last Week (Friday–Thursday)
+        <span class="note">27 Official SET Sectors · Ranked by weekly % change from prior Thursday close</span></h2>
+      ${table('sec_weekly', cols, filterRows(w.sectors_weekly), { benchmarkRows: [setBenchmarkRow] })}
+    </section>`;
+  }
+
+  if (sectorViewMode === 'ytd') {
+    const cols = [
+      { t: 'Rank', k: 'rank_ytd', a: 'c', cl: 'rank', f: (r, i) => r.symbol === '.SET' ? '★' : r.rank_ytd || i },
+      { t: 'Sector', k: 'name_en', a: 'l', f: r => `<b>${esc(r.symbol)}</b> <span style="font-weight:600">${esc(r.name_en)}</span> <span class="th-name">(${esc(r.name_th)})</span>` },
+      { t: 'Industry', k: 'industry', a: 'l', cl: 'name', f: r => esc(r.industry) },
+      { t: '2025 Year-End', k: 'ytd_base', f: r => nf(r.ytd_base) },
+      { t: 'Current Close', k: 'end_close', f: r => `<b>${nf(r.end_close)}</b>` },
+      { t: 'YTD %Return', k: 'ytd_pct', f: r => {
+        const p = r.ytd_pct;
+        const color = p > 0 ? 'var(--up)' : p < 0 ? 'var(--red)' : 'var(--muted)';
+        const barW = Math.min(70, Math.abs(p || 0) * 1.5);
+        return `<div class="bar-cell">
+          <span class="mini-bar" style="width:${barW}px;background:${color}"></span>
+          <span class="${cls(p)} fw-bold">${sgn(p)}%</span>
+        </div>`;
+      }},
+      { t: 'Alpha vs SET', k: 'alpha_set', f: r => `<span class="${cls(r.alpha_set)}">${sgn(r.alpha_set)}%</span>` },
+      { t: 'Last Week %', k: 'wow_pct', f: r => `<span class="${cls(r.wow_pct)}">${sgn(r.wow_pct)}%</span>` },
+      { t: 'Turnover (M฿)', k: 'val_mb', f: r => nf(r.val_mb, 1) },
+      { t: 'Active Stocks', k: 'stocks_count', f: r => ni(r.stocks_count) },
+    ];
+    return toolbar + `
+    <section class="panel vino">
+      <h2>Sector Performance Ranking: Year-to-Date (YTD)
+        <span class="note">Ranked by YTD return relative to 2025 year-end close (${DATA.ytdBaseDate})</span></h2>
+      ${table('sec_ytd', cols, filterRows(w.sectors_ytd), { benchmarkRows: [setBenchmarkRow] })}
+    </section>`;
+  }
+
+  // Matrix View
+  const cols = [
+    { t: 'Sector', k: 'name_en', a: 'l', f: r => `<b>${esc(r.symbol)}</b> ${esc(r.name_en)}` },
+    { t: 'Weekly %', k: 'wow_pct', f: r => `<span class="${cls(r.wow_pct)} fw-bold">${sgn(r.wow_pct)}%</span>` },
+    { t: 'YTD %', k: 'ytd_pct', f: r => `<span class="${cls(r.ytd_pct)} fw-bold">${sgn(r.ytd_pct)}%</span>` },
+    { t: 'Alpha SET', k: 'alpha_set', f: r => `<span class="${cls(r.alpha_set)}">${sgn(r.alpha_set)}%</span>` },
+    { t: 'Turnover (M฿)', k: 'val_mb', f: r => nf(r.val_mb, 1) },
+    { t: 'Market Share', k: 'val_share', f: r => `${nf(r.val_share, 1)}%` },
+    { t: 'NVDR Net (M฿)', k: 'nvdr_net_mb', f: r => `<span class="${cls(r.nvdr_net_mb)} fw-bold">${sgn(r.nvdr_net_mb, 1)}</span>` },
+    { t: 'NVDR / Turn %', k: 'nvdr_ratio', f: r => `${nf(r.nvdr_ratio, 1)}%` },
+    { t: 'Top Inflow Stock', k: 'top_buy_sym', a: 'l', f: r => r.top_buy_sym ? `<b>${esc(r.top_buy_sym)}</b> <span class="up">(+${nf(r.top_buy_mb, 1)}M)</span>` : '—' },
+    { t: 'Top Outflow Stock', k: 'top_sell_sym', a: 'l', f: r => r.top_sell_sym ? `<b>${esc(r.top_sell_sym)}</b> <span class="dn">(${nf(r.top_sell_mb, 1)}M)</span>` : '—' },
+  ];
+  return toolbar + `
+  <section class="panel gold">
+    <h2>Comprehensive Sector Matrix: Performance, Turnover &amp; NVDR Flow
+      <span class="note">Integrated analysis of weekly dynamics and institutional participation</span></h2>
+    ${table('sec_matrix', cols, filterRows(w.sectors_weekly), { benchmarkRows: [setBenchmarkRow] })}
+  </section>`;
+}
+
+/* 3. Breakdown of Trading Value & NVDR by Sector */
+function viewSectorBreakdown(w) {
+  // Proportional Market Share Bar
+  const top10Val = w.sectors_value.slice(0, 10);
+  const palette = ['#3F4C54', '#760E3A', '#1E7A5F', '#A89983', '#C33B32', '#5B6E7A', '#9B2C2C', '#2F855A', '#B7791F', '#4A5568'];
+  const segments = top10Val.map((s, i) => `
+    <div class="share-segment" style="width:${s.val_share}%;background:${palette[i % palette.length]}"
+      title="${esc(s.name_en)}: ${nf(s.val_mb, 1)} M฿ (${nf(s.val_share, 1)}%)"></div>`).join('');
+  const legend = top10Val.map((s, i) => `
+    <div class="share-legend-item">
+      <span class="share-dot" style="background:${palette[i % palette.length]}"></span>
+      <span><b>${esc(s.symbol)}</b> ${esc(s.name_en)} (${nf(s.val_share, 1)}%)</span>
+    </div>`).join('');
+
+  // Trading Value Table
+  const valCols = [
+    { t: 'Rank', k: 'rank_val', a: 'c', cl: 'rank', f: r => r.rank_val },
+    { t: 'Sector', k: 'name_en', a: 'l', f: r => `<b>${esc(r.symbol)}</b> <span style="font-weight:600">${esc(r.name_en)}</span>` },
+    { t: 'Trading Value (M฿)', k: 'val_mb', f: r => `<b>${nf(r.val_mb, 1)}</b>` },
+    { t: '% Share', k: 'val_share', f: r => {
+      const p = r.val_share || 0;
+      return `<div class="bar-cell">
+        <span class="mini-bar" style="width:${Math.min(80, p * 2.5)}px;background:var(--ink)"></span>
+        <b>${nf(p, 1)}%</b>
+      </div>`;
+    }},
+    { t: 'Avg Daily (M฿)', k: 'avg_daily_val', f: r => nf(r.avg_daily_val, 1) },
+    { t: 'Active Stocks', k: 'stocks_count', a: 'c', f: r => ni(r.stocks_count) },
+    { t: 'Weekly %Chg', k: 'wow_pct', f: r => `<span class="${cls(r.wow_pct)}">${sgn(r.wow_pct)}%</span>` },
+  ];
+
+  // NVDR Net Flow Table
+  const maxNvdr = Math.max(...w.sectors_nvdr.map(s => Math.abs(s.nvdr_net_mb || 0)), 1);
+  const nvdrCols = [
+    { t: 'Rank', k: 'rank_nvdr', a: 'c', cl: 'rank', f: r => r.rank_nvdr },
+    { t: 'Sector', k: 'name_en', a: 'l', f: r => `<b>${esc(r.symbol)}</b> <span style="font-weight:600">${esc(r.name_en)}</span>` },
+    { t: 'NVDR Buy (M฿)', k: 'nvdr_buy_mb', f: r => nf(r.nvdr_buy_mb, 1) },
+    { t: 'NVDR Sell (M฿)', k: 'nvdr_sell_mb', f: r => nf(r.nvdr_sell_mb, 1) },
+    { t: 'NVDR Net (M฿)', k: 'nvdr_net_mb', f: r => {
+      const v = r.nvdr_net_mb;
+      const color = v > 0 ? 'var(--up)' : v < 0 ? 'var(--red)' : 'var(--muted)';
+      const barW = Math.min(60, Math.abs(v || 0) / maxNvdr * 60);
+      return `<div class="bar-cell">
+        <span class="mini-bar" style="width:${barW}px;background:${color}"></span>
+        <span class="${cls(v)} fw-bold">${sgn(v, 1)}</span>
+      </div>`;
+    }},
+    { t: 'Top Accumulation', k: 'top_buy_sym', a: 'l', f: r => r.top_buy_sym ? `<b>${esc(r.top_buy_sym)}</b> <span class="up">+${nf(r.top_buy_mb, 1)}M</span>` : '—' },
+    { t: 'Top Distribution', k: 'top_sell_sym', a: 'l', f: r => r.top_sell_sym ? `<b>${esc(r.top_sell_sym)}</b> <span class="dn">${nf(r.top_sell_mb, 1)}M</span>` : '—' },
+  ];
+
+  return `
+  <div class="share-bar-container">
+    <div class="share-bar-title">Sector Market Share Distribution (Top 10 Sectors by Trading Value)</div>
+    <div class="share-bar">${segments}</div>
+    <div class="share-legend">${legend}</div>
+  </div>
+
+  <div class="grid-2">
+    <section class="panel">
+      <h2>Breakdown of Trading Value by Sector (Friday–Thursday)
+        <span class="note">Total: ${nf(w.summary.turnover_mb, 0)} M฿ · Ranked by turnover</span></h2>
+      ${table('sec_val', valCols, w.sectors_value)}
+    </section>
+
+    <section class="panel vino">
+      <h2>NVDR (Net Buy / Sell) by Sector (Friday–Thursday)
+        <span class="note">Foreign Portfolio Flow · Ranked by Net Inflow</span></h2>
+      ${table('sec_nvdr', nvdrCols, w.sectors_nvdr)}
+    </section>
+  </div>`;
+}
+
+/* 4. SET50 Ranking Tab */
+function viewSET50(w) {
+  const sum = w.summary;
+  let rows = w.set50.slice();
+  if (stockFilter50 === 'gainers') rows = rows.filter(r => (r.wow_pct || 0) > 0);
+  if (stockFilter50 === 'losers') rows = rows.filter(r => (r.wow_pct || 0) < 0);
+  if (search50) {
+    const q = search50.toLowerCase();
+    rows = rows.filter(r => r.symbol.toLowerCase().includes(q) || r.name.toLowerCase().includes(q) || r.sector.toLowerCase().includes(q));
+  }
+
+  const cols = [
+    { t: 'Rank', k: 'rank', a: 'c', cl: 'rank', f: r => r.rank },
+    { t: 'Symbol', k: 'symbol', a: 'l', cl: 'sym', f: r => esc(r.symbol) },
+    { t: 'Company Name', k: 'name', a: 'l', cl: 'name', f: r => esc(r.name) },
+    { t: 'Sector', k: 'sector', a: 'l', cl: 'name', f: r => esc(r.sector) },
+    { t: 'Prev Close', k: 'base', f: r => nf(r.base) },
+    { t: 'Week Close', k: 'close', f: r => `<b>${nf(r.close)}</b>` },
+    { t: 'Weekly Chg', k: 'chg', f: r => `<span class="${cls(r.chg)}">${sgn(r.chg)}</span>` },
+    { t: 'Weekly %Chg', k: 'wow_pct', f: r => `<span class="${cls(r.wow_pct)} fw-bold">${sgn(r.wow_pct)}%</span>` },
+    { t: 'YTD %', k: 'ytd_pct', f: r => `<span class="${cls(r.ytd_pct)}">${sgn(r.ytd_pct)}%</span>` },
+    { t: 'Weekly Range (Low – High)', k: 'close', f: stockRangeBar, s: false },
+    { t: 'Turnover (M฿)', k: 'val_mb', f: r => nf(r.val_mb, 1) },
+    { t: '% Share', k: 'val_share', f: r => `${nf(r.val_share, 2)}%` },
+    { t: 'NVDR Net (M฿)', k: 'nvdr_mb', f: r => `<span class="${cls(r.nvdr_mb)}">${sgn(r.nvdr_mb, 1)}</span>` },
+    { t: 'Mkt Cap (Bn฿)', k: 'mcap_mb', f: r => nf(r.mcap_mb ? r.mcap_mb / 1000 : null, 1) },
+  ];
+
+  return `
+  <div class="toolbar">
+    <div class="btn-group">
+      <button class="btn-toggle ${stockFilter50 === 'all' ? 'active' : ''}" onclick="setFilter50('all')">
+        All SET50 (50)
+      </button>
+      <button class="btn-toggle ${stockFilter50 === 'gainers' ? 'active' : ''}" onclick="setFilter50('gainers')">
+        Gainers (${w.set50.filter(r => (r.wow_pct||0) > 0).length})
+      </button>
+      <button class="btn-toggle ${stockFilter50 === 'losers' ? 'active' : ''}" onclick="setFilter50('losers')">
+        Losers (${w.set50.filter(r => (r.wow_pct||0) < 0).length})
+      </button>
+    </div>
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" placeholder="Search SET50 symbol or sector..." value="${esc(search50)}" oninput="onSearch50(this.value)">
+    </div>
+  </div>
+
+  <section class="panel">
+    <h2>SET50 Performance Ranking
+      <span class="note">SET50 Index: <b>${nf(sum.set50_close)}</b> (<span class="${cls(sum.set50_wow_pct)}">${sgn(sum.set50_wow_pct)}%</span>) · Ranked by weekly % change</span></h2>
+    ${table('set50_tbl', cols, rows)}
+  </section>`;
+}
+
+/* 5. SET100 Ranking Tab */
+function viewSET100(w) {
+  const sum = w.summary;
+  let rows = w.set100.slice();
+  if (stockFilter100 === 'gainers') rows = rows.filter(r => (r.wow_pct || 0) > 0);
+  if (stockFilter100 === 'losers') rows = rows.filter(r => (r.wow_pct || 0) < 0);
+  if (sector100Filter !== 'all') rows = rows.filter(r => r.sector === sector100Filter);
+  if (search100) {
+    const q = search100.toLowerCase();
+    rows = rows.filter(r => r.symbol.toLowerCase().includes(q) || r.name.toLowerCase().includes(q) || r.sector.toLowerCase().includes(q));
+  }
+
+  // Distinct sectors in SET100
+  const sectors100 = Array.from(new Set(w.set100.map(s => s.sector))).sort();
+
+  const cols = [
+    { t: 'Rank', k: 'rank', a: 'c', cl: 'rank', f: r => r.rank },
+    { t: 'Symbol', k: 'symbol', a: 'l', cl: 'sym', f: r => esc(r.symbol) },
+    { t: 'Company Name', k: 'name', a: 'l', cl: 'name', f: r => esc(r.name) },
+    { t: 'Sector', k: 'sector', a: 'l', cl: 'name', f: r => esc(r.sector) },
+    { t: 'Prev Close', k: 'base', f: r => nf(r.base) },
+    { t: 'Week Close', k: 'close', f: r => `<b>${nf(r.close)}</b>` },
+    { t: 'Weekly Chg', k: 'chg', f: r => `<span class="${cls(r.chg)}">${sgn(r.chg)}</span>` },
+    { t: 'Weekly %Chg', k: 'wow_pct', f: r => `<span class="${cls(r.wow_pct)} fw-bold">${sgn(r.wow_pct)}%</span>` },
+    { t: 'YTD %', k: 'ytd_pct', f: r => `<span class="${cls(r.ytd_pct)}">${sgn(r.ytd_pct)}%</span>` },
+    { t: 'Weekly Range (Low – High)', k: 'close', f: stockRangeBar, s: false },
+    { t: 'Turnover (M฿)', k: 'val_mb', f: r => nf(r.val_mb, 1) },
+    { t: '% Share', k: 'val_share', f: r => `${nf(r.val_share, 2)}%` },
+    { t: 'NVDR Net (M฿)', k: 'nvdr_mb', f: r => `<span class="${cls(r.nvdr_mb)}">${sgn(r.nvdr_mb, 1)}</span>` },
+  ];
+
+  return `
+  <div class="toolbar">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="btn-group">
+        <button class="btn-toggle ${stockFilter100 === 'all' ? 'active' : ''}" onclick="setFilter100('all')">
+          All SET100 (100)
+        </button>
+        <button class="btn-toggle ${stockFilter100 === 'gainers' ? 'active' : ''}" onclick="setFilter100('gainers')">
+          Gainers (${w.set100.filter(r => (r.wow_pct||0) > 0).length})
+        </button>
+        <button class="btn-toggle ${stockFilter100 === 'losers' ? 'active' : ''}" onclick="setFilter100('losers')">
+          Losers (${w.set100.filter(r => (r.wow_pct||0) < 0).length})
+        </button>
+      </div>
+      <select onchange="onSector100Filter(this.value)" style="padding:5px 8px;font-family:inherit;font-size:12px;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--bg)">
+        <option value="all">All Sectors</option>
+        ${sectors100.map(s => `<option value="${esc(s)}" ${sector100Filter === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" placeholder="Search SET100 symbol or sector..." value="${esc(search100)}" oninput="onSearch100(this.value)">
+    </div>
+  </div>
+
+  <section class="panel vino">
+    <h2>SET100 Performance Ranking
+      <span class="note">SET100 Index: <b>${nf(sum.set100_close)}</b> (<span class="${cls(sum.set100_wow_pct)}">${sgn(sum.set100_wow_pct)}%</span>) · Ranked by weekly % change</span></h2>
+    ${table('set100_tbl', cols, rows)}
+  </section>`;
+}
+
+/* 6. SET Top 20 Performance Tab */
+function viewSETTop20(w) {
+  const isLiquid = top20Liquidity === 'liquid';
+  const gainers = isLiquid ? w.top20_gainers_liquid : w.top20_gainers_all;
+  const losers = isLiquid ? w.top20_losers_liquid : w.top20_losers_all;
+  const turnover = w.top20_value;
+
+  const cols = [
+    { t: 'Rank', k: 'rank', a: 'c', cl: 'rank', f: (r, i) => i },
+    { t: 'Symbol', k: 'symbol', a: 'l', cl: 'sym', f: r => esc(r.symbol) },
+    { t: 'Sector', k: 'sector', a: 'l', cl: 'name', f: r => esc(r.sector) },
+    { t: 'Prev', k: 'base', f: r => nf(r.base) },
+    { t: 'Close', k: 'close', f: r => `<b>${nf(r.close)}</b>` },
+    { t: 'Weekly %', k: 'wow_pct', f: r => `<span class="${cls(r.wow_pct)} fw-bold">${sgn(r.wow_pct)}%</span>` },
+    { t: 'Val (M฿)', k: 'val_mb', f: r => nf(r.val_mb, 1) },
+    { t: 'NVDR (M฿)', k: 'nvdr_mb', f: r => `<span class="${cls(r.nvdr_mb)}">${sgn(r.nvdr_mb, 1)}</span>` },
+  ];
+
+  return `
+  <div class="toolbar">
+    <div class="btn-group">
+      <button class="btn-toggle ${isLiquid ? 'active' : ''}" onclick="setTop20Liquidity('liquid')">
+        Liquid Names Only (Turnover ≥ 5 M฿)
+      </button>
+      <button class="btn-toggle ${!isLiquid ? 'active' : ''}" onclick="setTop20Liquidity('all')">
+        All Traded Common Stocks
+      </button>
+    </div>
+    <div style="font-size:11.5px;color:var(--muted)">
+      Common equities listed on SET · Excludes derivative warrants, warrants, and preferred shares
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <section class="panel">
+      <h2>SET Top 20 Gainers
+        <span class="note">Weekly % Change</span></h2>
+      ${table('top20_up', cols, gainers)}
+    </section>
+
+    <section class="panel vino">
+      <h2>SET Top 20 Losers
+        <span class="note">Weekly % Change</span></h2>
+      ${table('top20_dn', cols, losers)}
+    </section>
+
+    <section class="panel gold">
+      <h2>SET Top 20 by Turnover
+        <span class="note">Highest Weekly Trading Value</span></h2>
+      ${table('top20_val', cols, turnover)}
+    </section>
+  </div>`;
+}
+
+/* ------------------------------------------------------------------ state dispatchers */
+function setWeek(wid) {
+  activeWeekId = wid;
+  render();
+}
+function setTab(t) {
+  activeTab = t;
+  renderMain();
+}
+function setSectorView(mode) {
+  sectorViewMode = mode;
+  renderMain();
+}
+function setTop20Liquidity(mode) {
+  top20Liquidity = mode;
+  renderMain();
+}
+function setFilter50(f) {
+  stockFilter50 = f;
+  renderMain();
+}
+function setFilter100(f) {
+  stockFilter100 = f;
+  renderMain();
+}
+function onSearch50(val) {
+  search50 = val;
+  renderMain();
+}
+function onSearch100(val) {
+  search100 = val;
+  renderMain();
+}
+function onSectorSearch(val) {
+  searchSector = val;
+  renderMain();
+}
+function onSector100Filter(val) {
+  sector100Filter = val;
+  renderMain();
+}
+
+/* ------------------------------------------------------------------ main render */
+function renderSidebar() {
+  const list = document.getElementById('weeklist');
+  list.innerHTML = DATA.weekList.map(wid => {
+    const w = DATA.weeks[wid];
+    const s = w.summary;
+    const isAct = wid === activeWeekId;
+    const total = (s.adv + s.dec + s.unch) || 1;
+    const advP = s.adv / total * 100;
+    const decP = s.dec / total * 100;
+    const unchP = s.unch / total * 100;
+    const badgeCls = w.is_wtd ? 'progress' : 'closed';
+    return `
+    <button class="weekbtn ${isAct ? 'active' : ''}" onclick="setWeek('${wid}')">
+      <div class="d1">
+        <span>${esc(w.short_label)}</span>
+        <span class="badge status-pill ${badgeCls}">${esc(w.status)}</span>
+      </div>
+      <div class="d2">
+        <span>SET ${nf(s.set_close, 1)}</span>
+        <span class="${cls(s.set_wow_pct)}">${sgn(s.set_wow_pct)}%</span>
+      </div>
+      <div class="breadth">
+        <i style="width:${advP}%;background:var(--up)" title="Adv: ${s.adv}"></i>
+        <i style="width:${unchP}%;background:var(--steel)" title="Unch: ${s.unch}"></i>
+        <i style="width:${decP}%;background:var(--red)" title="Dec: ${s.dec}"></i>
+      </div>
+    </button>`;
+  }).join('');
+}
+
+function renderHeader(w) {
+  const s = w.summary;
+  document.getElementById('hdr-period').innerText = w.label;
+  document.getElementById('hdr-turnover').innerText = `${nf(s.turnover_bn, 1)} Bn฿`;
+  document.getElementById('hdr-set').innerHTML = `${nf(s.set_close, 2)} <span class="${cls(s.set_wow_pct)}">(${sgn(s.set_wow_pct)}%)</span>`;
+  document.getElementById('hdr-built').innerText = DATA.generated;
+  document.getElementById('ftr-ytd-base').innerText = DATA.ytdBaseDate;
+}
+
+function renderStrip(w) {
+  const s = w.summary;
+  const strip = document.getElementById('strip');
+  strip.innerHTML = `
+    <div class="stat">
+      <div class="k">SET Index</div>
+      <div class="v ${cls(s.set_wow_pct)}">${nf(s.set_close, 2)}</div>
+      <div class="substat ${cls(s.set_wow_pct)}">${sgn(s.set_chg, 2)} pts (${sgn(s.set_wow_pct)}%) WoW</div>
+    </div>
+    <div class="stat">
+      <div class="k">SET YTD Return</div>
+      <div class="v ${cls(s.set_ytd_pct)}">${sgn(s.set_ytd_pct)}%</div>
+      <div class="substat fl">vs 2025 Year-End</div>
+    </div>
+    <div class="stat">
+      <div class="k">Weekly Turnover</div>
+      <div class="v">${nf(s.turnover_bn, 1)}<span class="u">Bn฿</span></div>
+      <div class="substat fl">Avg ${nf(s.avg_daily_turnover_bn, 1)} Bn฿/day (${s.trading_days}D)</div>
+    </div>
+    <div class="stat">
+      <div class="k">Foreign NVDR Net</div>
+      <div class="v ${cls(s.nvdr_net_mb)}">${sgn(s.nvdr_net_mb, 0)}<span class="u">M฿</span></div>
+      <div class="substat ${cls(s.nvdr_net_mb)}">${s.nvdr_net_mb >= 0 ? 'Net Accumulation' : 'Net Distribution'}</div>
+    </div>
+    <div class="stat">
+      <div class="k">Market Breadth</div>
+      <div class="v" style="font-size:15px">
+        <span class="up">▲ ${s.adv}</span> · <span class="dn">▼ ${s.dec}</span> · <span class="fl">▬ ${s.unch}</span>
+      </div>
+      <div class="substat fl">${s.traded_names} traded common names</div>
+    </div>
+    <div class="stat">
+      <div class="k">Top Sector (WoW)</div>
+      <div class="v up" style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(s.top_sector_name)}">
+        ${esc(s.top_sector_name)}
+      </div>
+      <div class="substat up">${sgn(s.top_sector_wow)}%</div>
+    </div>
+    <div class="stat">
+      <div class="k">Top NVDR Inflow</div>
+      <div class="v up" style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(s.top_nvdr_sector_name)}">
+        ${esc(s.top_nvdr_sector_name)}
+      </div>
+      <div class="substat up">+${nf(s.top_nvdr_sector_mb, 1)} M฿</div>
+    </div>`;
+}
+
+function renderTabs() {
+  const tabsEl = document.getElementById('tabs');
+  const tabs = [
+    { id: 'overview', name: 'Executive Overview', badge: 'Snapshot' },
+    { id: 'sectors', name: 'Sector Ranking', badge: 'Weekly & YTD' },
+    { id: 'breakdown', name: 'Turnover & NVDR Flow', badge: 'By Sector' },
+    { id: 'set50', name: 'SET50 Ranking', badge: '50' },
+    { id: 'set100', name: 'SET100 Ranking', badge: '100' },
+    { id: 'top20', name: 'SET Top 20 Performance', badge: 'Gainers & Losers' },
+  ];
+
+  tabsEl.innerHTML = tabs.map(t => `
+    <button class="tab ${activeTab === t.id ? 'active' : ''}" onclick="setTab('${t.id}')">
+      ${esc(t.name)}<span class="badge">${esc(t.badge)}</span>
+    </button>`).join('');
+}
+
+function renderMain() {
+  const w = DATA.weeks[activeWeekId];
+  if (!w) return;
+
+  renderTabs();
+  const view = document.getElementById('view');
+
+  if (activeTab === 'overview') view.innerHTML = viewOverview(w);
+  else if (activeTab === 'sectors') view.innerHTML = viewSectorRanking(w);
+  else if (activeTab === 'breakdown') view.innerHTML = viewSectorBreakdown(w);
+  else if (activeTab === 'set50') view.innerHTML = viewSET50(w);
+  else if (activeTab === 'set100') view.innerHTML = viewSET100(w);
+  else if (activeTab === 'top20') view.innerHTML = viewSETTop20(w);
+}
+
+function render() {
+  const w = DATA.weeks[activeWeekId];
+  if (!w) return;
+  renderSidebar();
+  renderHeader(w);
+  renderStrip(w);
+  renderMain();
+}
+
+/* ------------------------------------------------------------------ sort click delegator */
+document.addEventListener('click', e => {
+  const th = e.target.closest('thead th[data-t]');
+  if (!th) return;
+  const key = th.getAttribute('data-t');
+  const col = parseInt(th.getAttribute('data-c'), 10);
+  const cur = sortState[key];
+  if (cur && cur.col === col) {
+    cur.dir = cur.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortState[key] = { col, dir: 'desc' };
+  }
+  renderMain();
+});
+
+/* ------------------------------------------------------------------ init */
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('logo').src = LOGO;
+  render();
+});
+</script>
+</body>
+</html>
